@@ -60,7 +60,7 @@ export default function Sidebar() {
               href={item.href}
               className={`nav-item ${isActive ? 'active' : ''}`}
             >
-              <Icon size={45} style={{ flexShrink: 0 }} />
+              <Icon size={25} style={{ flexShrink: 0 }} />
               <span>{item.name}</span>
             </Link>
           )
