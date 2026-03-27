@@ -30,7 +30,7 @@ export default async function LoginPage({
           </div>
         )}
 
-        <form className="auth-form" action={login}>
+        <form className="auth-form" action={login} autoComplete="off">
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input 
@@ -40,6 +40,7 @@ export default async function LoginPage({
               type="email" 
               required 
               placeholder="you@example.com"
+              autoComplete="off"
             />
           </div>
           <div className="form-group">
@@ -51,6 +52,7 @@ export default async function LoginPage({
               type="password" 
               required 
               placeholder="••••••••"
+              autoComplete="off"
             />
           </div>
           
