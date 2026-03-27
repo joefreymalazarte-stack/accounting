@@ -18,9 +18,16 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
+  // Fetch the public profile (will be null if none exists yet)
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single()
+
   return (
     <div className="dashboard-container">
-      <Sidebar />
+      <Sidebar userEmail={user.email} profile={profile} />
       <main className="main-content">
         <header className="topbar">
           <div className="topbar-left">
