@@ -1,8 +1,17 @@
+import { Trash2 } from 'lucide-react'
 import { createClient } from '@/utils/supabase/server'
 import JournalEntryForm from '@/components/JournalEntryForm'
+import { formatCurrency } from '@/utils/currency'
+import { deleteJournalEntry } from './actions'
+import DeleteButton from '@/components/DeleteButton'
 
 export default async function JournalPage() {
   const supabase = await createClient()
+
+  // Fetch the user session to get currency code
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = await supabase.from('profiles').select('currency_code').eq('id', user?.id).single()
+  const currencyCode = (profile?.currency_code as string) || 'PHP'
 
   // Fetch journal entries with their associated ledger items and profile
   const { data: entries } = await supabase
@@ -23,7 +32,7 @@ export default async function JournalPage() {
       <div className="content-card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>General Journal</h2>
-          <JournalEntryForm />
+          <JournalEntryForm currencyCode={currencyCode} />
         </div>
 
         <div style={{ overflowX: 'auto' }}>
@@ -35,6 +44,7 @@ export default async function JournalPage() {
                 <th style={{ padding: '0.75rem 1rem', fontWeight: 500 }}>Created By</th>
                 <th style={{ padding: '0.75rem 1rem', fontWeight: 500, textAlign: 'right' }}>Debit (Dr.)</th>
                 <th style={{ padding: '0.75rem 1rem', fontWeight: 500, textAlign: 'right' }}>Credit (Cr.)</th>
+                <th style={{ padding: '0.75rem 1rem', width: '40px' }}></th>
               </tr>
             </thead>
             <tbody>
@@ -60,22 +70,29 @@ export default async function JournalPage() {
                     <td style={{ padding: '1rem', textAlign: 'right', verticalAlign: 'top' }}>
                       {entry.ledger_entries.map((item: any, idx: number) => (
                         <div key={idx} style={{ marginBottom: '0.25rem' }}>
-                          {item.debit > 0 ? `₱${parseFloat(item.debit).toFixed(2)}` : ''}
+                          {item.debit > 0 ? formatCurrency(item.debit, currencyCode) : ''}
                         </div>
                       ))}
                     </td>
                     <td style={{ padding: '1rem', textAlign: 'right', verticalAlign: 'top' }}>
                       {entry.ledger_entries.map((item: any, idx: number) => (
                         <div key={idx} style={{ marginBottom: '0.25rem' }}>
-                          {item.credit > 0 ? `₱${parseFloat(item.credit).toFixed(2)}` : ''}
+                          {item.credit > 0 ? formatCurrency(item.credit, currencyCode) : ''}
                         </div>
                       ))}
+                    </td>
+                    <td style={{ padding: '1rem', textAlign: 'center', verticalAlign: 'top' }}>
+                      <DeleteButton 
+                        id={entry.id} 
+                        onDelete={deleteJournalEntry} 
+                        title="Delete Entry" 
+                      />
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+                  <td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                     No journal entries recorded.
                   </td>
                 </tr>

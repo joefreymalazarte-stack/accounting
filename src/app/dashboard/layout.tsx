@@ -1,4 +1,5 @@
 import Sidebar from '@/components/Sidebar'
+import ThemeToggle from '@/components/ThemeToggle'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -18,7 +19,7 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
-  // Fetch the public profile (will be null if none exists yet)
+  // Fetch the public profile
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
@@ -31,9 +32,11 @@ export default async function DashboardLayout({
       <main className="main-content">
         <header className="topbar">
           <div className="topbar-left">
-            <span style={{color: 'var(--text-secondary)'}}>Accounting System Dashboard</span>
+            {/* Title removed per user request */}
           </div>
-          <div className="topbar-right"></div>
+          <div className="topbar-right">
+            <ThemeToggle />
+          </div>
         </header>
         <div className="page-container">
           {children}

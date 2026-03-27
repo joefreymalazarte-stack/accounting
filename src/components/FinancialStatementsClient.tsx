@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { formatCurrency } from '@/utils/currency'
 
 type AccountBalance = {
   account: string
@@ -8,7 +9,13 @@ type AccountBalance = {
   credit: number
 }
 
-export default function FinancialStatementsClient({ accounts }: { accounts: AccountBalance[] }) {
+export default function FinancialStatementsClient({ 
+  accounts, 
+  currencyCode = 'PHP' 
+}: { 
+  accounts: AccountBalance[],
+  currencyCode?: string 
+}) {
   const [activeTab, setActiveTab] = useState('pl')
 
   const statements = [
@@ -42,12 +49,12 @@ export default function FinancialStatementsClient({ accounts }: { accounts: Acco
               {accounts.map(a => a.credit > a.debit && (
                  <tr key={a.account}>
                    <td style={{ padding: '0.5rem 1rem' }}>{a.account}</td>
-                   <td style={{ textAlign: 'right' }}>₱{(a.credit - a.debit).toFixed(2)}</td>
+                   <td style={{ textAlign: 'right' }}>{formatCurrency(a.credit - a.debit, currencyCode)}</td>
                  </tr>
               ))}
               <tr style={{ borderTop: '1px solid var(--border-color)', fontWeight: 600 }}>
                 <td style={{ padding: '0.5rem' }}>Net Income / (Loss)</td>
-                <td style={{ textAlign: 'right' }}>₱{accounts.reduce((sum, a) => sum + (a.credit - a.debit), 0).toFixed(2)}</td>
+                <td style={{ textAlign: 'right' }}>{formatCurrency(accounts.reduce((sum, a) => sum + (a.credit - a.debit), 0), currencyCode)}</td>
               </tr>
             </tbody>
           </table>
@@ -65,22 +72,25 @@ export default function FinancialStatementsClient({ accounts }: { accounts: Acco
 
   return (
     <>
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+      <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '2rem', overflowX: 'auto', paddingBottom: '0.75rem', scrollbarWidth: 'none' }}>
         {statements.map(stmt => (
           <button
             key={stmt.id}
             onClick={() => setActiveTab(stmt.id)}
             style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: activeTab === stmt.id ? 'var(--accent-primary)' : 'var(--bg-secondary)',
+              padding: '0.75rem 1.5rem',
+              backgroundColor: activeTab === stmt.id ? 'var(--accent-primary)' : 'rgba(255,255,255,0.03)',
               color: activeTab === stmt.id ? '#fff' : 'var(--text-secondary)',
-              border: '1px solid var(--border-color)',
-              borderRadius: '8px',
+              border: activeTab === stmt.id ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
+              borderRadius: '99px',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
-              fontWeight: 500,
-              fontSize: '0.875rem',
-              transition: 'all 0.2s ease'
+              fontWeight: 600,
+              fontSize: '0.8125rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: activeTab === stmt.id ? '0 10px 15px -3px rgba(99, 102, 241, 0.3)' : 'none'
             }}
           >
             {stmt.name}
@@ -88,11 +98,17 @@ export default function FinancialStatementsClient({ accounts }: { accounts: Acco
         ))}
       </div>
 
-      <div className="content-card">
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', fontWeight: 600, textAlign: 'center' }}>
-          {statements.find(s => s.id === activeTab)?.name}
-        </h2>
-        {renderContent()}
+      <div className="content-card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ padding: '2.5rem 2rem', borderBottom: '1px solid var(--border-color)', background: 'linear-gradient(to bottom, rgba(255,255,255,0.02), transparent)' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, textAlign: 'center', letterSpacing: '-0.025em' }}>
+            {statements.find(s => s.id === activeTab)?.name}
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center', marginTop: '0.5rem' }}>For the Current Accounting Period</p>
+        </div>
+        
+        <div style={{ padding: '2rem' }}>
+          {renderContent()}
+        </div>
       </div>
     </>
   )

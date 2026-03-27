@@ -1,8 +1,10 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { updateProfile, uploadAvatar } from './actions'
+import { uploadAvatar } from './actions'
 import Image from 'next/image'
 import { User } from 'lucide-react'
+import ChangePasswordForm from '@/components/ChangePasswordForm'
+import ProfileIdentityForm from '@/components/ProfileIdentityForm'
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -17,66 +19,46 @@ export default async function ProfilePage() {
     .single()
 
   return (
-    <div>
+    <div style={{ maxWidth: '800px', margin: '0 auto', paddingBottom: '4rem' }}>
       <h1 className="page-title">Profile Settings</h1>
-      <p className="page-subtitle">Manage your account settings and preferences.</p>
+      <p className="page-subtitle">Manage your account identity and system preferences.</p>
 
-      <div className="content-card" style={{ maxWidth: '600px' }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1.5rem', fontWeight: 600 }}>Account Information</h2>
+      {/* Profile Identity Card */}
+      <div className="content-card" style={{ marginBottom: '2rem' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '2rem', fontWeight: 700 }}>Profile Identity</h2>
         
-        <div style={{ marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <div style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', background: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ marginBottom: '2.5rem', display: 'flex', alignItems: 'center', gap: '2rem', padding: '1.5rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+          <div style={{ width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden', background: 'var(--bg-tertiary)', border: '2px solid var(--accent-primary)', position: 'relative', boxShadow: '0 0 20px rgba(99, 102, 241, 0.2)' }}>
             {profile?.avatar_url ? (
-               <Image src={profile.avatar_url} alt="Profile" width={80} height={80} style={{ objectFit: 'cover' }} />
+               <Image src={profile.avatar_url} alt="Profile" fill style={{ objectFit: 'cover' }} />
             ) : (
-               <User size={40} color="var(--text-secondary)" />
+               <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                 <User size={48} color="var(--text-secondary)" />
+               </div>
             )}
           </div>
           
-          <form action={uploadAvatar} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Upload new avatar</label>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-               <input type="file" name="avatar" accept="image/*" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }} required />
-               <button type="submit" className="auth-button" style={{ marginTop: 0, padding: '0.5rem 1rem', fontSize: '0.875rem' }}>Upload</button>
-            </div>
-          </form>
+          <div style={{ flex: 1 }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Avatar Image</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1rem' }}>Upload a square image for best results.</p>
+            <form 
+              action={async (formData) => {
+                'use server'
+                await uploadAvatar(formData)
+              }} 
+              style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}
+            >
+               <input type="file" name="avatar" accept="image/*" style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', width: 'auto' }} required />
+               <button type="submit" className="auth-button" style={{ marginTop: 0, padding: '0.5rem 1.25rem', fontSize: '0.75rem' }}>Change Image</button>
+            </form>
+          </div>
         </div>
 
-        <form action={updateProfile} className="auth-form">
-          <div className="form-group">
-            <label>Email Address</label>
-            <input type="text" className="form-input" disabled value={user.email} style={{ opacity: 0.7, cursor: 'not-allowed' }} />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="username">Username</label>
-            <input 
-              type="text" 
-              id="username" 
-              name="username" 
-              className="form-input" 
-              defaultValue={profile?.username || ''} 
-              placeholder="Enter your username" 
-            />
-          </div>
-
-          <div className="form-group">
-             <label htmlFor="notes">Notes</label>
-             <textarea 
-               id="notes" 
-               name="notes" 
-               className="form-input" 
-               rows={4} 
-               defaultValue={profile?.notes || ''} 
-               placeholder="Add some notes about your account..." 
-             />
-          </div>
-
-          <button type="submit" className="auth-button" style={{ alignSelf: 'flex-start', padding: '0.75rem 2rem' }}>
-            Save Changes
-          </button>
-        </form>
+        <ProfileIdentityForm profile={profile} userEmail={user.email || ''} />
       </div>
+
+      {/* Security Settings Card */}
+      <ChangePasswordForm />
     </div>
   )
 }

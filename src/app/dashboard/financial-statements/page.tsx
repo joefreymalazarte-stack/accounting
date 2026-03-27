@@ -4,6 +4,11 @@ import FinancialStatementsClient from '@/components/FinancialStatementsClient'
 export default async function FinancialStatementsPage() {
   const supabase = await createClient()
 
+  // Fetch the user session to get currency code
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = await supabase.from('profiles').select('currency_code').eq('id', user?.id).single()
+  const currencyCode = (profile?.currency_code as string) || 'PHP'
+
   const { data: ledgerEntries } = await supabase
     .from('ledger_entries')
     .select('*')
@@ -23,9 +28,9 @@ export default async function FinancialStatementsPage() {
   return (
     <>
       <h1 className="page-title">Financial Statements</h1>
-      <p className="page-subtitle">The final output of the accounting process.</p>
+      <p className="page-subtitle">The final output of the accounting process (Base: {currencyCode}).</p>
       
-      <FinancialStatementsClient accounts={accounts} />
+      <FinancialStatementsClient accounts={accounts} currencyCode={currencyCode} />
     </>
   )
 }

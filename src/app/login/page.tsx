@@ -4,9 +4,11 @@ import Link from 'next/link'
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string; message?: string }>
 }) {
-  const errorMessage = (await searchParams).error
+  const params = await searchParams
+  const errorMessage = params.error
+  const successMessage = params.message
 
   return (
     <div className="auth-container">
@@ -19,6 +21,12 @@ export default async function LoginPage({
         {errorMessage && (
           <div className="error-message">
             {errorMessage}
+          </div>
+        )}
+
+        {successMessage && (
+          <div style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.2)', color: '#22c55e', padding: '1rem', borderRadius: '8px', marginBottom: '2rem', fontSize: '0.875rem', textAlign: 'center' }}>
+            {successMessage}
           </div>
         )}
 
@@ -45,9 +53,21 @@ export default async function LoginPage({
               placeholder="••••••••"
             />
           </div>
-          <button className="auth-button" formAction={login}>
+          
+          <button className="auth-button" type="submit">
             Sign In
           </button>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem', fontSize: '0.8125rem' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+              <input type="checkbox" name="remember" style={{ accentColor: 'var(--accent-primary)' }} />
+              Remember Me
+            </label>
+            
+            <Link href="/login/forgot-password" style={{ color: 'var(--accent-secondary)', fontWeight: 600, textDecoration: 'none' }}>
+              Forgot password?
+            </Link>
+          </div>
         </form>
 
         <div className="auth-footer">
