@@ -26,21 +26,7 @@ export default async function DashboardLayout({
           <div className="topbar-left">
             <span style={{color: 'var(--text-secondary)'}}>Accounting System Dashboard</span>
           </div>
-          <div className="topbar-right" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.875rem' }}>{user.email}</span>
-            <form action="/auth/signout" method="post">
-              <button style={{ 
-                background: 'transparent', 
-                border: '1px solid var(--border-color)', 
-                color: 'var(--text-primary)',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                cursor: 'pointer'
-              }}>
-                Sign out
-              </button>
-            </form>
-          </div>
+          <div className="topbar-right"></div>
         </header>
         <div className="page-container">
           {children}

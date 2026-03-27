@@ -8,7 +8,9 @@ import {
   BookOpen,
   BookMarked,
   Scale,
-  PieChart
+  PieChart,
+  User,
+  LogOut
 } from 'lucide-react'
 
 const navItems = [
@@ -67,8 +69,17 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="sidebar-footer" style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textAlign: 'center' }}>
-        Accounting System &copy; 2026
+      <div className="sidebar-bottom" style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div className="nav-item">
+          <User size={25} style={{ flexShrink: 0 }} />
+          <span>Profile</span>
+        </div>
+        <form action="/auth/signout" method="post" style={{ margin: 0 }}>
+          <button type="submit" className="nav-item" style={{ width: '100%', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', color: 'inherit', font: 'inherit', padding: '0.75rem' }}>
+            <LogOut size={25} style={{ flexShrink: 0 }} />
+            <span>Sign out</span>
+          </button>
+        </form>
       </div>
     </aside>
   )
