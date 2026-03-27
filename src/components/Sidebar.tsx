@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Image from 'next/image'
 import {
   FileText,
   BookOpen,
@@ -44,7 +45,7 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <PieChart size={24} color="var(--accent-primary)" />
+        <Image src="/icon.png" alt="Process of Accounting Logo" width={32} height={32} style={{ borderRadius: '4px' }}/>
         <span>Process of Accounting</span>
       </div>
 
