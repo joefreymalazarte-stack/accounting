@@ -45,8 +45,8 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <Image src="/icon1.jpg" alt="Process of Accounting Logo" width={75} height={75} style={{ borderRadius: '4px' }}/>
-        <span>Process of Accounting</span>
+        <Image src="/icon1.jpg" alt="Accounting Logo" width={50} height={50} style={{ borderRadius: '4px' }}/>
+        <span>Accounting</span>
       </div>
 
       <nav className="sidebar-nav">
